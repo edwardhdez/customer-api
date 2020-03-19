@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package com.consultec.customer.service;
 
 import com.consultec.customer.constants.Status;
@@ -16,8 +11,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 /**
+ * Lógica de negocio para la administración de los clientes
  *
- * @author acap1609
+ * @author Edward Hernandez
  */
 @Service
 @RequiredArgsConstructor
@@ -25,23 +21,52 @@ public class CustomerService {
 
     private final CustomerRepository customerRepository;
 
+    /**
+     * Buscar un cliente
+     *
+     * @param id Número del cliente
+     * @return Datos del cliente
+     */
     public Customer getCustomer(Long id) {
         return customerRepository.findById(id).orElseThrow(CustomerNotFoundException::new);
     }
 
+    /**
+     * Busqueda de clientes por los criterios usuario y estatus
+     *
+     * @param username Usuario registrado
+     * @param status estatus resgistarado (ENABLE / DISABLED)
+     * @return Datos del Cliente
+     */
     public Customer getCustomerByUsernameAndStatus(String username, Status status) {
         return customerRepository.findByUsernameAndStatus(username, status).orElseThrow(CustomerNotFoundException::new);
 
     }
 
+    /**
+     * Obtener el listado de clientes
+     *
+     * @return Datos del cliente
+     */
     public List<Customer> getAllCustomers() {
         return customerRepository.findAll();
     }
 
+    /**
+     * Eliminar un cliente de la base de datos de clientes
+     *
+     * @param id Número del cliente
+     */
     public void deleteCustomer(Long id) {
         customerRepository.deleteById(id);
     }
 
+    /**
+     * Registrar nuevos clientes
+     *
+     * @param customerDTO Informaciones de registro para un nuevo cliente
+     * @return Datos del cliente
+     */
     public Customer addCustomer(CustomerDTO customerDTO) {
         Customer customer = new Customer();
         copyCustomerDataFromDTO(customer, customerDTO);
@@ -49,6 +74,12 @@ public class CustomerService {
         return customerRepository.save(customer);
     }
 
+    /**
+     * Actualizar los datos del cliente
+     *
+     * @param id Número del cliente
+     * @param customerDTO Informaciones que se deben actualizar del cliente
+     */
     public void updateCustomer(Long id, CustomerDTO customerDTO) {
         Customer customer = customerRepository.findById(id).orElseThrow(CustomerNotFoundException::new);
         copyCustomerDataFromDTO(customer, customerDTO);
@@ -56,6 +87,13 @@ public class CustomerService {
 
     }
 
+    /**
+     * Transferir datos hacia el objeto del dominio del cliente
+     *
+     * @param customer Objeto del dominio o entidad del cliente
+     * @param customerDTO Objeto para la recepción de datos a través del
+     * servicio Restful
+     */
     private void copyCustomerDataFromDTO(Customer customer, CustomerDTO customerDTO) {
         customer.setAddress(customerDTO.getAddress());
         customer.setEmail(customerDTO.getEmail());
